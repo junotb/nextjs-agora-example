@@ -4,7 +4,7 @@ import clsx from "clsx";
 import { useRef, useState } from "react";
 
 export default function Page() {
-  const CANVAS_WIDTH = 512, CANVAS_HEIGHT = 256;
+  const CANVAS_WIDTH = 192, CANVAS_HEIGHT = 256;
   const [isStart, setIsStart] = useState(false);
   const [reqAnimeId, setReqAnimeId] = useState(0);
   const sourceNodeRef = useRef<AudioBufferSourceNode | null>(null);
@@ -27,7 +27,7 @@ export default function Page() {
     sourceNodeRef.current = new AudioBufferSourceNode(audioContext, { buffer: decodedBuffer, loop: false });
 
     // Set up the AnalyserNode
-    const analyserNode = new AnalyserNode(audioContext, { fftSize: 256 });
+    const analyserNode = new AnalyserNode(audioContext, { fftSize: 128 });
     const dataArray = new Uint8Array(analyserNode.frequencyBinCount);
     
     // Connect the nodes together
@@ -54,15 +54,16 @@ export default function Page() {
     canvasContext.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
     // Draw the amplitude inside the canvas
-    for (let i = 0; i < dataArray.length; i++) {
-      const value = dataArray[i] / 256;
-      const x = i * 8;
-      const y = (CANVAS_HEIGHT) * (value - 0.5);
-      canvasContext.fillStyle = "black";
+    for (let i = 0; i < dataArray.length; i += 8) {
+      const value = dataArray[i] / CANVAS_HEIGHT;
+      const x = i;
+      const y = Math.abs(value - 0.5) * CANVAS_HEIGHT;
+      canvasContext.strokeStyle = 'rgb(180, 32, 37)';
+      canvasContext.fillStyle = 'rgb(180, 32, 37)';
       canvasContext.beginPath(); // Start a new path
-      canvasContext.moveTo(x, (CANVAS_HEIGHT / 2) + y); // Move the pen
-      canvasContext.lineTo(x, (CANVAS_HEIGHT / 2) - y); // Draw a line
-      canvasContext.stroke(); // Render the path
+      canvasContext.roundRect((x * 2.5) + 18, CANVAS_HEIGHT / 2, 16, y * 1.2, [0, 0, 8, 8]); // Draw a Rectangle
+      canvasContext.roundRect((x * 2.5) + 18, CANVAS_HEIGHT / 2, 16, -y * 1.2, [0, 0, 8, 8]); // Draw a Rectangle
+      canvasContext.fill(); // Render the path
     }
   };
 
