@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "agora-rtc-react": "^2.1.0",
+    "agora-rtc-sdk-ng": "^4.20.2",
     "clsx": "^2.1.1",
     "next": "14.2.3",
     "openai": "^4.47.1",
