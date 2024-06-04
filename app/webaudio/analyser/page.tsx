@@ -1,5 +1,6 @@
 'use client';
 
+import Header from "@/components/Header";
 import clsx from "clsx";
 import { useRef, useState } from "react";
 
@@ -84,28 +85,31 @@ export default function Page() {
 
   return (
 		<div className="flex flex-col justify-center items-center h-full gap-2">
-      <h1 className="font-bold">Web Audio API examples: audio analyser</h1>
-      <canvas
-        ref={canvasRef}
-        width={CANVAS_WIDTH}
-        height={CANVAS_HEIGHT}
-        className="border"
-      ></canvas>
-      <div className="flex gap-2">
-        <button
-          type="button"
-          onClick={handleStart}
-          disabled={isStart}
-          className={clsx("border px-4 py-2", { "bg-neutral-500" : isStart })}
-        >Start</button>
-        <button
-          type="button"
-          onClick={handleStop}
-          disabled={!isStart}
-          className={clsx("border px-4 py-2", { "bg-neutral-500" : !isStart })}
-        >Stop</button>
+      <Header />
+      <div className="flex flex-col justify-center items-center gap-4 mt-12 w-full max-w-xl h-full">
+        <h1 className="text-xl font-bold">Web Audio API examples: audio analyser</h1>
+        <canvas
+          ref={canvasRef}
+          width={CANVAS_WIDTH}
+          height={CANVAS_HEIGHT}
+          className="border"
+        ></canvas>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={handleStart}
+            disabled={isStart}
+            className={clsx("border px-4 py-2", { "bg-neutral-500" : isStart })}
+          >Start</button>
+          <button
+            type="button"
+            onClick={handleStop}
+            disabled={!isStart}
+            className={clsx("border px-4 py-2", { "bg-neutral-500" : !isStart })}
+          >Stop</button>
+        </div>
+        <output ref={outputRef}></output>
       </div>
-      <output ref={outputRef}></output>
     </div>
   );
 }
