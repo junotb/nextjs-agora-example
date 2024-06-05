@@ -8,83 +8,84 @@ export default function Page() {
   const [isStart, setIsStart] = useState(false);
   const [reqAnimeId, setReqAnimeId] = useState(0);
   const sourceNodeRef = useRef<AudioBufferSourceNode | null>(null);
-  const outputRef = useRef<HTMLOutputElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  const loadAudio = async (audioContext: AudioContext) => { 
+    return await fetch("/audios/viper.mp3")
+      .then((response) => response.arrayBuffer())
+      .then((downloadedBuffer) => audioContext.decodeAudioData(downloadedBuffer));
+  }
 
   const handleStart = async () => {
     setIsStart(true);
-    outputRef.current!.textContent = "Loading audio…";
 
-    // A user interaction happened we can create the audioContext
+    // 오디오 처리를 위한 기본 인터페이스 생성
     const audioContext = new AudioContext();
 
-    // Load the audio the first time through, otherwise play it from the buffer    
-    const decodedBuffer = await fetch("/audios/viper.mp3")
-      .then((response) => response.arrayBuffer())
-      .then((downloadedBuffer) => audioContext.decodeAudioData(downloadedBuffer));
+    // 오디오 파일을 로드하고 디코딩
+    const decodedBuffer = await loadAudio(audioContext);
 
-    // Set up the AudioBufferSourceNode
+    // AudioBufferSourceNode를 생성
     sourceNodeRef.current = new AudioBufferSourceNode(audioContext, { buffer: decodedBuffer, loop: false });
 
-    // Set up the AnalyserNode
+    // AnalyserNode를 생성
     const analyserNode = new AnalyserNode(audioContext, { fftSize: 128 });
     const dataArray = new Uint8Array(analyserNode.frequencyBinCount);
     
-    // Connect the nodes together
+    // 노드들을 연결
     sourceNodeRef.current
       .connect(analyserNode)
       .connect(audioContext.destination);
     
-    // Play the audio
-    outputRef.current!.textContent = "Audio playing…";
-    sourceNodeRef.current.start(0); // Play the sound now
+    // 오디오 재생
+    sourceNodeRef.current.start(0);
 
-    // Request Animation Frame
+    // 애니메이션 프레임을 이용하여 캔버스에 그리기
     drawCanvas(analyserNode, dataArray);
   }
 
   const drawCanvas = (analyserNode: AnalyserNode, dataArray: Uint8Array) => {
+    // 애니메이션 프레임을 요청
     setReqAnimeId(requestAnimationFrame(() => drawCanvas(analyserNode, dataArray)));
 
-    // Get the time domain data for this sample
+    // Domain Data를 가져와서 dataArray에 저장
     analyserNode.getByteTimeDomainData(dataArray);
 
-    // Clear the canvas
+    // 캔버스 초기화
     const canvasContext = canvasRef.current!.getContext("2d")!;
     canvasContext.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-    // Draw the amplitude inside the canvas
+    // 캔버스에 진폭을 그리기
     for (let i = 0; i < dataArray.length; i += 8) {
       const value = dataArray[i] / CANVAS_HEIGHT;
       const x = i;
       const y = Math.abs(value - 0.5) * CANVAS_HEIGHT;
       canvasContext.strokeStyle = 'rgb(180, 32, 37)';
       canvasContext.fillStyle = 'rgb(180, 32, 37)';
-      canvasContext.beginPath(); // Start a new path
-      canvasContext.roundRect((x * 2.5) + 18, CANVAS_HEIGHT / 2, 16, y * 1.2, [0, 0, 8, 8]); // Draw a Rectangle
-      canvasContext.roundRect((x * 2.5) + 18, CANVAS_HEIGHT / 2, 16, -y * 1.2, [0, 0, 8, 8]); // Draw a Rectangle
-      canvasContext.fill(); // Render the path
+      canvasContext.beginPath();
+      canvasContext.roundRect((x * 2.5) + 18, CANVAS_HEIGHT / 2, 16, y * 1.2, [0, 0, 8, 8]);
+      canvasContext.roundRect((x * 2.5) + 18, CANVAS_HEIGHT / 2, 16, -y * 1.2, [0, 0, 8, 8]);
+      canvasContext.fill();
     }
   };
 
   const handleStop = () => {
     setIsStart(false);
-    outputRef.current!.textContent = "Audio stopped.";
 
-    // Set up the event handler to stop playing the audio
+    // 오디오 정지
     sourceNodeRef.current!.stop(0);
 
-    // Cancel Animation Frame
+    // 애니메이션 프레임 취소
     cancelAnimationFrame(reqAnimeId!);
 
-    // Clear the canvas
+    //	캔버스 초기화
     const canvasContext = canvasRef.current!.getContext("2d")!;
     canvasContext.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
   }
 
   return (
 		<div className="flex flex-col justify-center items-center h-full gap-2">
-      <h1 className="font-bold">Web Audio API examples: audio analyser</h1>
+      <h1 className="font-bold">Audio analyser</h1>
       <canvas
         ref={canvasRef}
         width={CANVAS_WIDTH}
@@ -105,7 +106,6 @@ export default function Page() {
           className={clsx("border px-4 py-2", { "bg-neutral-500" : !isStart })}
         >Stop</button>
       </div>
-      <output ref={outputRef}></output>
     </div>
   );
 }
