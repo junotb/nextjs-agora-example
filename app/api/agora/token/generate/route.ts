@@ -10,9 +10,9 @@ export async function POST(req: NextRequest) {
     /*
     "token": string,
     "user": {
-        "user_id": string,
-        "user_auid": number,
-        "screen_auid": number
+      "user_id": string,
+      "user_auid": number,
+      "screen_auid": number
     }
     */
     const data = await fetch(`${agoraApiDomain}/v1/token/generate`, {
