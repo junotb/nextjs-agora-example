@@ -1,15 +1,11 @@
 'use client';
 
 import Header from "@/components/Header";
-import { useRouter } from "next/navigation";
 import { FormEvent } from "react";
 
 export default function Page() {
-  const router = useRouter();
-  
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    const token = fetch('/api/agora/token/generate', {
+  function handleSubmit(event: FormEvent<HTMLFormElement>): void {
+    throw new Error("Function not implemented.");
   }
 
   return (
