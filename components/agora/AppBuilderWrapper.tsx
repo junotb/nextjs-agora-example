@@ -6,13 +6,13 @@ import { useEffect } from "react";
 export default function AppBuilderWrapper () {
   useEffect(() => {
     const initAppBuilder = async () => {
-      const token = await fetch('/api/agora/token/generate', {
+      const data = await fetch('/api/agora/token', {
         method: 'POST',
-      })
-        .then((res) => res.json())
-        .then((data) => data.token);
+        headers: { 'Content-Type': 'application/json' },
+      }).then(response => response.json());
+      if (!data) return;
 
-      AgoraAppBuilder.login(token);
+      AgoraAppBuilder.login(data.token);
     }
     initAppBuilder();
   }, []);

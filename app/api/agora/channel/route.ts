@@ -1,15 +1,24 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { createChannel } from "@/lib/agora";
 
-export async function POST(req: NextRequest) {
-  const { title, enable_pstn } = await req.json();
+const APP_BUILDER_HOST = process.env.AGORA_APP_BUILDER_HOST!;
+const API_KEY = process.env.AGORA_API_KEY!;
+const PROJECT_ID = process.env.AGORA_PROJECT_ID!;
+
+export async function POST(req: Request) {
+  const { channelTitle, isHost } = await req.json();
 
   try {
-    const data = await createChannel(title, enable_pstn);
-
-    return NextResponse.json({ data: data }, { status: 201 });
+    const data = await createChannel(channelTitle);    
+    if (!data) throw new Error();
+    
+    return Response.json({
+      channel: data.channel,
+      phrase: (isHost) ? data.host_pass_phrase : data.viewer_pass_phrase,
+    }, { status: 201 });
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ error: '채널 생성 중에 오류가 발생했습니다.' }, { status: 500 });
+    return Response.json({
+      error: '채널 획득에 문제가 발생했습니다.'
+    }, { status: 500 });
   }
 }
