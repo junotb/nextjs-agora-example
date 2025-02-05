@@ -1,7 +1,7 @@
 import Grammar from "@/components/Grammar";
 import Record from "@/components/Record";
 
-export default function Home() {  
+export default function Page() {  
   return (
 		<div className="flex flex-col justify-center items-center h-full gap-2">
       <h1>Get Started RecordRTC Example</h1>
