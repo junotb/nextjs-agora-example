@@ -10,10 +10,10 @@
   },
   "dependencies": {
     "@appbuilder/react": "file:services/agora",
-    "agora-rtc-react": "^2.3.0",
-    "axios": "^1.7.9",
+    "agora-rtc-react": "^2.1.0",
+    "agora-rtc-sdk-ng": "^4.20.2",
     "clsx": "^2.1.1",
-    "next": "14.2.15",
+    "next": "14.2.3",
     "openai": "^4.47.1",
     "openvidu-browser": "^2.29.1",
     "openvidu-react": "^2.27.0",

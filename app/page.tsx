@@ -1,20 +1,37 @@
-"use client";
+'use client';
 
-import ServiceCard from "@/components/cards/ServiceCard";
+import Header from "@/components/Header";
+import Link from "next/link";
 
 export default function Home() {
   return (
-    <main className="flex flex-col justify-center items-center size-full bg-gray-200">
-      <div className="space-y-4">
-        <div className="space-y-2">
-          <p className="text-xl font-bold">Web audio Api</p>
-          <ServiceCard title="Audio Recorder" description="Record audio using the Web Audio API." href="/webaudio/recorder" />
+		<div className="flex flex-col justify-center items-center h-full gap-2">
+      <Header />
+      <div className="mt-12 w-full max-w-xl h-full">
+        <div className="flex flex-col gap-4 p-4">
+          <h1 className="text-xl font-bold">Welcome to the home page.</h1>
         </div>
-        <div className="space-y-2">
-          <p className="text-xl font-bold">WebRTC Libraries</p>
-          <ServiceCard title="Video Chat" description="Start a video chat using Agora WebRTC." href="/webrtc/agora" />
+        <div className="flex flex-col gap-4 p-4">
+          <h2 className="border-b py-2 text-lg font-bold">Web audio</h2>
+          <div className="grid grid-cols-2 gap-4">
+            <article className="flex flex-col gap-2 border p-4">
+              <h3 className="text-base font-bold">Audio analyser</h3>
+              <p>Visualise the audio amplitude using the audio analyser node.</p>
+              <Link href="/webaudio/analyser" className="border px-4 py-2">Go to example</Link>
+            </article>
+          </div>
+        </div>
+        <div className="flex flex-col gap-4 p-4">
+          <h2 className="border-b py-2 text-lg font-bold">Agora</h2>
+          <div className="grid grid-cols-2 gap-4">
+            <article className="flex flex-col gap-2 border p-4">
+              <h3 className="text-base font-bold">Video Chat</h3>
+              <p>Start a video chat using Agora WebRTC.</p>
+              <Link href="/webrtc/agora" className="border px-4 py-2">Go to example</Link>
+            </article>
+          </div>
         </div>
       </div>
-    </main>
+    </div>
   );
 }
