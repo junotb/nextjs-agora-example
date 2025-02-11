@@ -1,6 +1,7 @@
 'use client';
 
 import Header from "@/components/Header";
+import { requestChannel } from "@/lib/agora";
 import clsx from "clsx";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
@@ -12,18 +13,19 @@ export default function Page() {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    const formData = new FormData(event.currentTarget);
-    const data = await fetch('/api/agora/channel', {
-      method: 'POST',
-      body: JSON.stringify({
-        channelTitle: formData.get('channelTitle'),
-        isHost: isHost,
-      }),
-      headers: { 'Content-Type': 'application/json' },
-    }).then((response) => response.json());
-    if (!data) return console.error('Failed to create channel');
+    try {
+      const formData = new FormData(event.currentTarget);
+      const title = formData.get('title') as string;
+      
+      if (!title) return;
 
-    router.push(`/webrtc/agora/appbuilder?channel=${data.channel}&phrase=${data.phrase}`)
+      const data = await requestChannel(title);
+      const { channel, host_pass_phrase, viewer_pass_phrase } = data;
+
+      router.push(`/webrtc/agora/appbuilder?channel=${channel}`);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   function handleClick(isTrue: boolean) {
@@ -45,7 +47,7 @@ export default function Page() {
           />
           <input
             type="text"
-            name="channelTitle"
+            name="title"
             className="border border-gray-700 rounded px-4 py-2 w-full"
             placeholder="Enter a title"
             required
