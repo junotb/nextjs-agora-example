@@ -17,6 +17,10 @@ html, body {
   height: 100%;
 }
 
+input, select, textarea, button {
+  outline: none;
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;

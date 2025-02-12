@@ -1,6 +1,6 @@
 'use server'
 
-import axios from "axios";
+import axios from 'axios';
 
 const APP_BUILDER_HOST = process.env.AGORA_APP_BUILDER_HOST!;
 const API_KEY = process.env.AGORA_API_KEY!;
@@ -38,15 +38,20 @@ const authHeader = {
  * @throws {Error} 채널 생성 실패
  */
 const requestChannel = async (title: string): Promise<ChannelResponse> => {
-  const response = await axios.post(
-    `${APP_BUILDER_HOST}/v1/channel`,
-    {
-      title: title,
-      enable_pstn: false,
-    },
-    appBuilderHeader
-  );
-  return response.data;
+  try {
+    const response = await axios.post(
+      `${APP_BUILDER_HOST}/v1/channel`,
+      {
+        title: title,
+        enable_pstn: false,
+      },
+      appBuilderHeader
+    );
+    return response.data;
+  } catch (error: any) {
+    console.error('채널 생성에 실패:', error.response?.data || error.message);
+    throw new Error('채널 생성에 실패했습니다.');
+  }
 }
 
 /**
@@ -63,8 +68,34 @@ const requestToken = async (): Promise<TokenResponse> => {
     );
     return response.data;
   } catch (error: any) {
-    console.error("Agora 토큰 생성에 실패했습니다.:", error.response?.data || error.message);
+    console.error('Agora 토큰 생성에 실패:', error.response?.data || error.message);
     throw new Error('토큰 생성에 실패했습니다.');
+  }
+};
+
+/**
+ * 채널 입장 API 호출
+ * @param {string} token 토큰
+ * @returns {Promise<JoinChannelResponse>} 채널 입장 응답
+ * @throws {Error} 채널 입장 실패
+ */
+const joinChannel = async (token: string, passphrase: string): Promise<JoinChannelResponse> => {
+  try {
+    const response = await axios.post(
+      `${APP_BUILDER_HOST}/v1/channel/join`,
+      {
+        passphrase,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error: any) {
+    console.error('채널 입장에 실패:', error.response?.data || error.message);
+    throw new Error('채널 입장에 실패했습니다.');
   }
 };
 
@@ -101,7 +132,7 @@ const acquireResource = async (cname: string, uid: string): Promise<ResourceResp
     );
     return response.data;
   } catch (error: any) {
-    console.error("Agora 녹화 리소스 획득에 실패했습니다.:", error.response?.data || error.message);
+    console.error('Agora 녹화 리소스 획득에 실패했습니다.:', error.response?.data || error.message);
     throw new Error('녹화 리소스 획득에 실패했습니다.');
   }
 };
@@ -146,9 +177,9 @@ const startRecording = async (token: string, cname: string, uid: string, resourc
     );
     return response.data;
   } catch (error: any) {
-    console.error("Agora 녹화 시작에 실패했습니다.:", error.response?.data || error.message);
+    console.error('Agora 녹화 시작에 실패했습니다.:', error.response?.data || error.message);
     throw new Error('녹화 시작에 실패했습니다.');
   }
 };
 
-export { requestChannel, requestToken, acquireResource, startRecording };
+export { requestChannel, requestToken, joinChannel, acquireResource, startRecording };
