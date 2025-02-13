@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import AgoraAppBuilder from '@appbuilder/react';
 import { joinChannel, requestToken } from '@/lib/agora';
+import { AgoraRTCProvider } from 'agora-rtc-react';
 
 interface AgoraCardProps {
   channel: string;
@@ -35,6 +36,7 @@ export default function AgoraCard({ channel, host_pass_phrase, viewer_pass_phras
     
     async function fetchAppBuilder() {
       try {
+        console.log('Agora AppBuilder 로그인 시도:', token);
         AgoraAppBuilder.login(token);
       } catch (error: any) {
         console.error('Agora AppBuilder 로그인에 실패:', error.message);
@@ -48,7 +50,6 @@ export default function AgoraCard({ channel, host_pass_phrase, viewer_pass_phras
   if (!token) return null;
 
   return (
-    <div className="flex flex-col justify-center items-center w-full">
-    </div>
+    <>{token}</>
   );
 }
