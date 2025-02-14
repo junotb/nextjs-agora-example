@@ -6,8 +6,8 @@ import CreateChannelForm from '@/components/form/CreateChannelForm';
 export default function Page() {
   const router = useRouter();
   
-  const handleSubmit = (channel: string, host_pass_phrase: string, viewer_pass_phrase: string) => {
-    router.push(`/webrtc/agora/channel/${channel}?host_pass_phrase=${host_pass_phrase}&viewer_pass_phrase=${viewer_pass_phrase}`);
+  const handleSubmit = (channel: string) => {
+    router.push(`/webrtc/agora/channel/${channel}`);
   }
 
   return (
